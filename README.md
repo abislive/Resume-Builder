@@ -1,13 +1,21 @@
 ResumeForge – Advanced Resume Builder
+
 ResumeForge is a client‑side resume builder that helps you create professional, ATS‑optimized resumes with live preview, multiple templates, drag‑and‑drop section ordering, rich editing, and multi‑format export. It runs entirely in the browser – no backend required.
 
 ✨ Features
+
 🎨 Design & Customization
+
 12 distinct resume templates – Modern, Classic, Minimal, Sidebar, Creative, Executive, Timeline, Compact, Infographic, Elegant, Professional, Gradient.
+
 Live preview with zoom, fit‑to‑screen, and page‑break indication.
+
 Dynamic accent colors – pick primary and secondary theme colors.
+
 Font pair selector – Inter, Playfair Display, JetBrains Mono, Poppins, Merriweather.
+
 Spacing controls – tight, normal, relaxed.
+
 Inline editing – click directly on preview elements to edit text with Markdown support.
 
 📝 Content Management
