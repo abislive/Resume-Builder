@@ -2,6 +2,8 @@ ResumeForge – Advanced Resume Builder
 
 ResumeForge is a client‑side resume builder that helps you create professional, ATS‑optimized resumes with live preview, multiple templates, drag‑and‑drop section ordering, rich editing, and multi‑format export. It runs entirely in the browser – no backend required.
 
+To view the page please visit - https://abislive.github.io/Resume-Builder/
+
 ✨ Features
 
 🎨 Design & Customization
