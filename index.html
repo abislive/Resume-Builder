@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ResumeForge – Advanced Resume Builder</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&family=JetBrains+Mono:wght@400;500&family=Poppins:wght@400;500;600;700&family=Merriweather:wght@400;700&family=Lora:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+    <!-- Template Modal -->
+    <div class="template-modal" id="templateModal">
+        <div class="template-modal-overlay"></div>
+        <div class="template-modal-content">
+            <div class="modal-header">
+                <h2>Choose a Template</h2>
+                <button id="closeModal" class="close-btn" type="button">✕</button>
+            </div>
+            <div class="template-grid" id="templateGrid"></div>
+        </div>
+    </div>
+
+    <!-- Job Description Match Modal -->
+    <div class="jd-modal" id="jdModal">
+        <div class="jd-modal-overlay"></div>
+        <div class="jd-modal-content">
+            <div class="modal-header">
+                <h2>Match Job Description</h2>
+                <button id="closeJdModal" class="close-btn" type="button">✕</button>
+            </div>
+            <textarea id="jdText" rows="8" placeholder="Paste the job description here..."></textarea>
+            <button id="analyzeJdBtn" class="btn btn-primary" type="button">Analyze Keywords</button>
+            <div id="jdResults" class="jd-results"></div>
+        </div>
+    </div>
+
+    <!-- Version Manager Modal -->
+    <div class="version-modal" id="versionModal">
+        <div class="version-modal-overlay"></div>
+        <div class="version-modal-content">
+            <div class="modal-header">
+                <h2>Resume Versions</h2>
+                <button id="closeVersionModal" class="close-btn" type="button">✕</button>
+            </div>
+            <div id="versionList" class="version-list"></div>
+            <div style="display:flex; gap:0.5rem; margin-top:1rem;">
+                <input id="newVersionName" placeholder="New version name" class="form-control">
+                <button id="createVersionBtn" class="btn btn-primary" type="button">Create</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="app-header">
+        <div class="header-container">
+            <div class="logo">Resume<span class="accent">Forge</span></div>
+            <div class="header-actions">
+                <button id="changeTemplateBtn" class="btn btn-ghost" type="button">Change Template</button>
+                <button id="jdMatchBtn" class="btn btn-ghost" type="button">🎯 Job Match</button>
+                <button id="versionManagerBtn" class="btn btn-ghost" type="button">📁 Versions</button>
+                <button id="themeToggle" class="btn btn-ghost" type="button">🌓</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="app-main">
+        <div class="main-container">
+            <!-- Form Panel -->
+            <section class="form-panel">
+                <div class="panel-header">
+                    <h2>Edit Resume</h2>
+                    <div class="header-buttons">
+                        <button id="loadSampleBtn" class="btn btn-sm btn-ghost" type="button">Load Sample</button>
+                        <button id="exportBtn" class="btn btn-sm btn-ghost" type="button">Export</button>
+                        <button id="importBtn" class="btn btn-sm btn-ghost" type="button">Import</button>
+                        <input type="file" id="importFile" accept=".json" hidden>
+                    </div>
+                </div>
+
+                <!-- Section Order -->
+                <div class="section-order">
+                    <label>Section Display Order (drag to reorder)</label>
+                    <div id="sectionOrderList" class="section-order-list"></div>
+                </div>
+
+                <!-- Personal Information -->
+                <div class="form-section active" data-section="personal">
+                    <div class="section-header" data-target="personalFields">
+                        <h3>👤 Personal Information</h3>
+                        <span class="chevron">▼</span>
+                    </div>
+                    <div class="section-content show" id="personalFields">
+                        <div class="photo-upload">
+                            <div id="photoPreview" class="photo-preview">📷</div>
+                            <label for="photoUpload" class="btn btn-sm btn-ghost">Upload Photo</label>
+                            <input type="file" id="photoUpload" accept="image/*" hidden>
+                            <button id="removePhoto" class="btn btn-sm btn-remove" type="button" style="display:none;">Remove</button>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group"><label>Full Name *</label><input id="fullName" spellcheck="true"></div>
+                            <div class="form-group"><label>Job Title *</label><input id="jobTitle" spellcheck="true"></div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group"><label>Email *</label><input id="email" type="email" spellcheck="false"></div>
+                            <div class="form-group"><label>Phone</label><input id="phone" spellcheck="false"></div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group"><label>Location</label><input id="location" spellcheck="true"></div>
+                            <div class="form-group"><label>Website</label><input id="website" spellcheck="false"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Professional Summary</label>
+                            <textarea id="summary" rows="4" spellcheck="true"></textarea>
+                            <span id="summaryCount" class="char-count">0 / 500</span>
+                        </div>
+                        <div class="form-group">
+                            <label>Social Links</label>
+                            <input id="linkedin" placeholder="LinkedIn URL">
+                            <input id="github" placeholder="GitHub URL">
+                            <input id="twitter" placeholder="Twitter / X URL">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Experience -->
+                <div class="form-section" data-section="experience">
+                    <div class="section-header" data-target="experienceFields">
+                        <h3>💼 Experience</h3>
+                        <span class="chevron">▼</span>
+                    </div>
+                    <div class="section-content" id="experienceFields">
+                        <div id="experienceContainer"></div>
+                        <button id="addExperience" class="btn btn-add" type="button">+ Add Experience</button>
+                    </div>
+                </div>
+
+                <!-- Education -->
+                <div class="form-section" data-section="education">
+                    <div class="section-header" data-target="educationFields">
+                        <h3>🎓 Education</h3>
+                        <span class="chevron">▼</span>
+                    </div>
+                    <div class="section-content" id="educationFields">
+                        <div id="educationContainer"></div>
+                        <button id="addEducation" class="btn btn-add" type="button">+ Add Education</button>
+                    </div>
+                </div>
+
+                <!-- Skills -->
+                <div class="form-section" data-section="skills">
+                    <div class="section-header" data-target="skillsFields">
+                        <h3>🛠️ Skills</h3>
+                        <span class="chevron">▼</span>
+                    </div>
+                    <div class="section-content" id="skillsFields">
+                        <div id="skillsContainer"></div>
+                        <button id="addSkillCategory" class="btn btn-add" type="button">+ Add Skill Category</button>
+                    </div>
+                </div>
+
+                <!-- Projects -->
+                <div class="form-section" data-section="projects">
+                    <div class="section-header" data-target="projectsFields">
+                        <h3>📁 Projects</h3>
+                        <span class="chevron">▼</span>
+                    </div>
+                    <div class="section-content" id="projectsFields">
+                        <div id="projectsContainer"></div>
+                        <button id="addProject" class="btn btn-add" type="button">+ Add Project</button>
+                    </div>
+                </div>
+
+                <!-- Custom Sections -->
+                <div class="form-section" data-section="custom">
+                    <div class="section-header" data-target="customFields">
+                        <h3>📌 Custom Sections</h3>
+                        <span class="chevron">▼</span>
+                    </div>
+                    <div class="section-content" id="customFields">
+                        <div id="customSectionsContainer"></div>
+                        <button id="addCustomSection" class="btn btn-add" type="button">+ Add Custom Section</button>
+                    </div>
+                </div>
+
+                <!-- Languages & Certifications -->
+                <div class="form-section" data-section="languages">
+                    <div class="section-header" data-target="languagesFields">
+                        <h3>🌐 Languages & Certifications</h3>
+                        <span class="chevron">▼</span>
+                    </div>
+                    <div class="section-content" id="languagesFields">
+                        <div class="form-group"><label>Languages</label><input id="languages" spellcheck="true"></div>
+                        <div class="form-group"><label>Certifications</label><textarea id="certifications" rows="3" spellcheck="true"></textarea></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Preview Panel -->
+            <section class="preview-panel">
+                <div class="preview-controls">
+                    <div class="control-group">
+                        <button id="zoomOut" class="btn btn-sm btn-ghost" type="button">-</button>
+                        <span id="zoomLevel">100%</span>
+                        <button id="zoomIn" class="btn btn-sm btn-ghost" type="button">+</button>
+                        <button id="fitScreen" class="btn btn-sm btn-ghost" type="button">Fit</button>
+                    </div>
+                    <select id="spacingSelect" class="select-sm">
+                        <option value="tight">Spacing: Tight</option>
+                        <option value="normal" selected>Spacing: Normal</option>
+                        <option value="relaxed">Spacing: Relaxed</option>
+                    </select>
+                    <select id="fontSelect" class="select-sm">
+                        <option value="default">Font: Inter</option>
+                        <option value="serif">Font: Editorial Serif</option>
+                        <option value="mono">Font: JetBrains Mono</option>
+                        <option value="poppins">Font: Poppins</option>
+                        <option value="merriweather">Font: Merriweather</option>
+                    </select>
+                    <label class="color-label">Primary: <input type="color" id="accentPrimary" value="#6366f1"></label>
+                    <label class="color-label">Secondary: <input type="color" id="accentSecondary" value="#8b5cf6"></label>
+                    <button id="toggleInlineEdit" class="btn btn-sm btn-ghost" type="button">✏️ Inline Edit</button>
+                    <button id="downloadBtn" class="btn btn-sm btn-primary" type="button">Download PDF</button>
+                    <button id="exportTxtBtn" class="btn btn-sm btn-ghost" type="button">.txt</button>
+                    <button id="exportMdBtn" class="btn btn-sm btn-ghost" type="button">.md</button>
+                    <button id="resetBtn" class="btn btn-sm btn-ghost" type="button">Reset</button>
+                </div>
+                <div id="atsScore" class="ats-score">ATS Score: -</div>
+                <div id="previewScroll" class="preview-scroll">
+                    <div id="pageBreakIndicator" class="page-indicator"></div>
+                    <div id="resumePaper" class="resume-paper"></div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <div id="toast" class="toast"></div>
+    <script src="script.js"></script>
+</body>
+</html>
