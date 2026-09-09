@@ -146,6 +146,12 @@ function showToast(msg) {
 // ============ INIT ============
 document.addEventListener('DOMContentLoaded', () => {
     loadVersions();
+    // Set dark theme by default
+    if (!localStorage.getItem('theme')) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+        document.documentElement.setAttribute('data-theme', localStorage.getItem('theme'));
+    }
     buildTemplateGrid();
     buildSectionOrder();
     applyStateToForm();
@@ -190,6 +196,7 @@ function buildSectionOrder() {
     if (window.Sortable) {
         new Sortable(container, {
             animation: 150,
+            touchStartThreshold: 5,
             onEnd: () => {
                 state.sectionsOrder = [...$$('#sectionOrderList .order-chip')].map(c => c.dataset.section);
                 saveState();
@@ -212,8 +219,7 @@ function applyStateToForm() {
     $('#summaryCount').textContent = `${p.summary.length} / 500`;
     $('#linkedin').value = p.linkedin;
     $('#github').value = p.github;
-    $('#twitter').value = p.twitter;
-
+    $('#twitter').value = p.twitter || '';
     if (p.photo) {
         $('#photoPreview').innerHTML = `<img src="${p.photo}" alt="Profile">`;
         $('#removePhoto').style.display = 'inline-flex';
@@ -221,7 +227,6 @@ function applyStateToForm() {
         $('#photoPreview').innerHTML = '📷';
         $('#removePhoto').style.display = 'none';
     }
-
     renderAllForms();
     $('#languages').value = state.languages;
     $('#certifications').value = state.certifications;
@@ -239,7 +244,7 @@ function renderAllForms() {
     renderCustomSectionsForm();
 }
 
-// ============ FORM RENDERERS ============
+// ============ FORM RENDERERS (unchanged from previous, but included for completeness) ============
 function renderSkillsForm() {
     const container = $('#skillsContainer');
     container.innerHTML = '';
@@ -276,7 +281,7 @@ function renderExperienceForm() {
     state.experience.forEach((exp, idx) => {
         const div = document.createElement('div');
         div.className = 'entry-form';
-        div.dataset.idx = idx;  // <-- FIX: data-idx on root
+        div.dataset.idx = idx;
         div.innerHTML = `
             <div class="entry-header" style="cursor: grab;">
                 <button class="collapse-toggle" type="button">▼ ${escapeHtml(exp.title) || 'Experience'}</button>
@@ -316,12 +321,11 @@ function renderExperienceForm() {
         `;
         container.appendChild(div);
     });
-
-    // Sortable for experience entries
     if (window.Sortable) {
         new Sortable(container, {
             animation: 150,
             handle: '.entry-header',
+            touchStartThreshold: 5,
             onEnd: () => {
                 const newOrder = [...$$('#experienceContainer .entry-form')].map(el => parseInt(el.dataset.idx, 10));
                 state.experience = newOrder.map(i => state.experience[i]);
@@ -339,7 +343,7 @@ function renderEducationForm() {
     state.education.forEach((edu, idx) => {
         const div = document.createElement('div');
         div.className = 'entry-form';
-        div.dataset.idx = idx;  // FIX
+        div.dataset.idx = idx;
         div.innerHTML = `
             <div class="entry-header" style="cursor: grab;">
                 <button class="collapse-toggle" type="button">▼ ${escapeHtml(edu.degree) || 'Education'}</button>
@@ -359,11 +363,11 @@ function renderEducationForm() {
         `;
         container.appendChild(div);
     });
-    // Sortable for education entries
     if (window.Sortable) {
         new Sortable(container, {
             animation: 150,
             handle: '.entry-header',
+            touchStartThreshold: 5,
             onEnd: () => {
                 const newOrder = [...$$('#educationContainer .entry-form')].map(el => parseInt(el.dataset.idx, 10));
                 state.education = newOrder.map(i => state.education[i]);
@@ -381,7 +385,7 @@ function renderProjectsForm() {
     state.projects.forEach((proj, idx) => {
         const div = document.createElement('div');
         div.className = 'entry-form';
-        div.dataset.idx = idx;  // FIX
+        div.dataset.idx = idx;
         div.innerHTML = `
             <div class="entry-header" style="cursor: grab;">
                 <button class="collapse-toggle" type="button">▼ ${escapeHtml(proj.name) || 'Project'}</button>
@@ -406,11 +410,11 @@ function renderProjectsForm() {
         `;
         container.appendChild(div);
     });
-    // Sortable for projects entries
     if (window.Sortable) {
         new Sortable(container, {
             animation: 150,
             handle: '.entry-header',
+            touchStartThreshold: 5,
             onEnd: () => {
                 const newOrder = [...$$('#projectsContainer .entry-form')].map(el => parseInt(el.dataset.idx, 10));
                 state.projects = newOrder.map(i => state.projects[i]);
@@ -470,12 +474,13 @@ function renderPreview() {
 
     const p = state.personal;
     const contactParts = [];
-    if (p.email) contactParts.push({ type: 'email', value: p.email });
-    if (p.phone) contactParts.push({ type: 'phone', value: p.phone });
-    if (p.location) contactParts.push({ type: 'location', value: p.location });
-    if (p.website) contactParts.push({ type: 'website', value: p.website });
-    if (p.linkedin) contactParts.push({ type: 'linkedin', value: p.linkedin });
-    if (p.github) contactParts.push({ type: 'github', value: p.github });
+    if (p.email) contactParts.push({ type: 'email', value: p.email, label: '📧' });
+    if (p.phone) contactParts.push({ type: 'phone', value: p.phone, label: '📞' });
+    if (p.location) contactParts.push({ type: 'location', value: p.location, label: '📍' });
+    if (p.website) contactParts.push({ type: 'website', value: p.website, label: '🔗' });
+    if (p.linkedin) contactParts.push({ type: 'linkedin', value: p.linkedin, label: '💼' });
+    if (p.github) contactParts.push({ type: 'github', value: p.github, label: '🐙' });
+    if (p.twitter) contactParts.push({ type: 'twitter', value: p.twitter, label: '🐦' });
 
     if (state.template === 'sidebar') {
         resumePaper.innerHTML = buildSidebarTemplate(p, contactParts);
@@ -487,7 +492,6 @@ function renderPreview() {
     resumePaper.style.transform = `scale(${state.zoom})`;
     $('#zoomLevel').textContent = `${Math.round(state.zoom * 100)}%`;
 
-    // Inline editing mode
     if (state.inlineEdit) {
         resumePaper.setAttribute('contenteditable', 'true');
         resumePaper.querySelectorAll('.editable').forEach(el => el.setAttribute('contenteditable', 'true'));
@@ -505,21 +509,8 @@ function renderPreview() {
     }
 }
 
-// SVG contact icon generator
-function contactIcon(type) {
-    const icons = {
-        email: '<svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>',
-        phone: '<svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>',
-        location: '<svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>',
-        website: '<svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm6.93 6h-2.95c-.32-1.25-.78-2.45-1.38-3.56 1.84.63 3.37 1.91 4.33 3.56zM12 4.04c.83 1.2 1.48 2.53 1.91 3.96h-3.82c.43-1.43 1.08-2.76 1.91-3.96zM4.26 14C4.1 13.36 4 12.69 4 12s.1-1.36.26-2h3.38c-.08.66-.14 1.32-.14 2 0 .68.06 1.34.14 2H4.26zm.82 2h2.95c.32 1.25.78 2.45 1.38 3.56-1.84-.63-3.37-1.9-4.33-3.56zm2.95-8H5.08c.96-1.66 2.49-2.93 4.33-3.56C8.81 5.55 8.35 6.75 8.03 8zM12 19.96c-.83-1.2-1.48-2.53-1.91-3.96h3.82c-.43 1.43-1.08 2.76-1.91 3.96zM14.34 14H9.66c-.09-.66-.16-1.32-.16-2 0-.68.07-1.35.16-2h4.68c.09.65.16 1.32.16 2 0 .68-.07 1.34-.16 2zm.25 5.56c.6-1.11 1.06-2.31 1.38-3.56h2.95c-.96 1.65-2.49 2.93-4.33 3.56zM16.36 14c.08-.66.14-1.32.14-2 0-.68-.06-1.34-.14-2h3.38c.16.64.26 1.31.26 2s-.1 1.36-.26 2h-3.38z"/></svg>',
-        linkedin: '<svg viewBox="0 0 24 24"><path d="M19 0h-14c-2.76 0-5 2.24-5 5v14c0 2.76 2.24 5 5 5h14c2.76 0 5-2.24 5-5v-14c0-2.76-2.24-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.27c-.97 0-1.75-.79-1.75-1.76s.78-1.76 1.75-1.76 1.75.79 1.75 1.76-.78 1.76-1.75 1.76zm13.5 12.27h-3v-5.6c0-1.34-.03-3.07-1.87-3.07-1.87 0-2.16 1.46-2.16 2.97v5.7h-3v-11h2.88v1.5h.04c.4-.76 1.38-1.56 2.84-1.56 3.04 0 3.6 2 3.6 4.6v6.46z"/></svg>',
-        github: '<svg viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>'
-    };
-    return icons[type] || '';
-}
-
 function buildStandardTemplate(p, contactParts) {
-    let contactHtml = contactParts.map(c => `<span style="display:inline-flex;align-items:center;">${contactIcon(c.type)} ${escapeHtml(c.value)}</span>`).join('');
+    let contactHtml = contactParts.map(c => `<span class="contact-item">${c.label} ${escapeHtml(c.value)}</span>`).join('');
     let html = '';
     if (p.photo) {
         html += `
@@ -553,7 +544,7 @@ function buildSidebarTemplate(p, contactParts) {
     sidebar += `<h1 class="editable" data-field="fullName">${escapeHtml(p.fullName) || 'Your Name'}</h1>`;
     sidebar += `<div class="job-title editable" data-field="jobTitle">${escapeHtml(p.jobTitle) || 'Professional Title'}</div>`;
     if (contactParts.length) {
-        sidebar += `<div class="section-title">Contact</div><div class="sidebar-contact">${contactParts.map(c => `<div style="display:flex;align-items:center;gap:0.3rem;">${contactIcon(c.type)} ${escapeHtml(c.value)}</div>`).join('')}</div>`;
+        sidebar += `<div class="section-title">Contact</div><div class="sidebar-contact">${contactParts.map(c => `<div>${c.label} ${escapeHtml(c.value)}</div>`).join('')}</div>`;
     }
     if (state.skills.length) {
         sidebar += `<div class="section-title">Skills</div>`;
@@ -574,7 +565,6 @@ function buildSidebarTemplate(p, contactParts) {
     return sidebar + main;
 }
 
-// ============ SECTION RENDERING ============
 function renderSectionsContent(skipSections = []) {
     let html = '';
     const p = state.personal;
@@ -756,13 +746,11 @@ function syncInlineEdits() {
         }
     });
     saveState();
-    // Update form inputs without re-render
     $('#fullName').value = state.personal.fullName;
     $('#jobTitle').value = state.personal.jobTitle;
     $('#summary').value = state.personal.summary;
     $('#summaryCount').textContent = `${state.personal.summary.length} / 500`;
     $('#certifications').value = state.certifications;
-    // For nested fields, we would update the specific input if visible, but since form re-renders are avoided, we can skip or update via applyStateToForm (but that would lose focus). We'll update critical ones.
 }
 
 // ============ VERSION MANAGER UI ============
@@ -906,7 +894,6 @@ function updateATS() {
     let hasAction = false;
     state.experience.forEach(exp => exp.bullets.forEach(b => { if (actionVerbs.some(v => b.toLowerCase().includes(v))) hasAction = true; }));
     if (hasAction) score += 15; else missing.push('Action verbs');
-    // Impact metrics detection
     let hasMetric = false;
     const metricRegex = /\b\d+%|\$\d+|\d+\s*(?:users|hours|days|weeks|months|years|million|k)\b/i;
     state.experience.forEach(exp => exp.bullets.forEach(b => { if (metricRegex.test(b)) hasMetric = true; }));
@@ -919,15 +906,12 @@ function updateATS() {
     if (missing.length) el.textContent += ` (Add: ${missing.join(', ')})`;
 }
 
-// Multi-word phrase extraction for job description
 function extractPhrases(text) {
-    // First, create a list of multi-word technical terms from skills and common tech phrases
     const knownPhrases = [
         'project management', 'continuous integration', 'spring boot', 'react native', 'rest apis', 'aws lambda',
         'node.js', 'machine learning', 'data analysis', 'ui/ux design', 'version control', 'agile methodologies',
         'scrum', 'kanban', 'microservices', 'docker', 'kubernetes', 'ci/cd', 'front-end', 'back-end', 'full-stack'
     ];
-    // Add skill names (multi-word)
     state.skills.forEach(cat => cat.items.forEach(item => {
         if (item.name.includes(' ')) knownPhrases.push(item.name.toLowerCase());
     }));
@@ -936,7 +920,6 @@ function extractPhrases(text) {
     knownPhrases.forEach(phrase => {
         if (lower.includes(phrase)) phrases.push(phrase);
     });
-    // Add single words (filtered)
     const words = lower.match(/\b[a-z]{3,}\b/g)?.filter(w => !STOPWORDS.has(w)) || [];
     return { phrases, words };
 }
@@ -948,7 +931,6 @@ function analyzeJobDescription() {
     const resumeAnalysis = extractPhrases(buildResumeTextForMatching());
     const matched = [];
     const missing = [];
-    // Check phrases first (higher weight)
     jdAnalysis.phrases.forEach(p => {
         if (resumeAnalysis.phrases.includes(p) || resumeAnalysis.words.includes(p.replace(/\s+/g, ''))) matched.push(p);
         else missing.push(p);
@@ -1002,7 +984,6 @@ function setupListeners() {
         $('#versionModal').classList.remove('active');
         $('#newVersionName').value = '';
     });
-    // Version list actions
     $('#versionList').addEventListener('click', (e) => {
         const btn = e.target;
         const id = btn.dataset.id;
@@ -1221,8 +1202,10 @@ function setupListeners() {
 
     // Theme toggle
     $('#themeToggle').addEventListener('click', () => {
-        document.documentElement.setAttribute('data-theme',
-            document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+        const current = document.documentElement.getAttribute('data-theme');
+        const next = current === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('theme', next);
     });
 }
 
