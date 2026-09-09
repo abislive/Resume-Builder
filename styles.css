@@ -15,6 +15,20 @@
     --font-heading: 'Inter', sans-serif;
 }
 
+/* Dark theme is default */
+[data-theme="light"] {
+    --bg: #f8fafc;
+    --surface: #ffffff;
+    --surface2: #f1f5f9;
+    --text: #0f172a;
+    --text-secondary: #475569;
+    --border: #e2e8f0;
+    --accent-primary: #6366f1;
+    --accent-secondary: #8b5cf6;
+    --danger: #ef4444;
+    --shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+
 [data-theme="dark"] {
     --bg: #0f172a;
     --surface: #1e293b;
@@ -22,6 +36,9 @@
     --text: #f1f5f9;
     --text-secondary: #cbd5e1;
     --border: #334155;
+    --accent-primary: #818cf8;
+    --accent-secondary: #a78bfa;
+    --danger: #f87171;
     --shadow: 0 4px 20px rgba(0,0,0,0.5);
 }
 
@@ -32,6 +49,7 @@ body {
     color: var(--text);
     line-height: 1.5;
     transition: background var(--transition), color var(--transition);
+    min-height: 100vh;
 }
 
 /* Modals */
@@ -65,7 +83,7 @@ body {
 .header-container { max-width: 1400px; margin: 0 auto; width: 100%; display: flex; align-items: center; justify-content: space-between; }
 .logo { font-weight: 700; font-size: 1.4rem; letter-spacing: -0.02em; }
 .accent { color: var(--accent-primary); }
-.header-actions { display: flex; gap: 0.5rem; }
+.header-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
 
 /* Buttons */
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; padding: 0.5rem 1rem; border-radius: 6px; border: none; cursor: pointer; font-weight: 500; font-family: inherit; font-size: 0.875rem; transition: all var(--transition); background: var(--surface2); color: var(--text); }
@@ -109,7 +127,7 @@ body {
 input, textarea, select { width: 100%; padding: 0.55rem 0.75rem; border: 1px solid var(--border); border-radius: 6px; background: var(--surface2); color: var(--text); font-family: inherit; font-size: 0.875rem; }
 input:focus, textarea:focus, select:focus { outline: none; border-color: var(--accent-primary); box-shadow: 0 0 0 3px rgba(99,102,241,0.12); }
 textarea { resize: vertical; min-height: 70px; }
-.social-input { margin-bottom: 0.4rem; }
+.social-group .social-input { margin-bottom: 0.5rem; } /* spacing between social fields */
 .char-count { font-size: 0.75rem; color: var(--text-secondary); float: right; margin-top: 0.25rem; }
 
 /* Photo Upload */
@@ -157,7 +175,7 @@ textarea { resize: vertical; min-height: 70px; }
 .resume-paper h1 { font-family: var(--font-heading); color: var(--accent-primary); font-size: 1.8rem; line-height: 1.2; }
 .resume-paper .job-title { color: var(--accent-secondary); font-size: 1rem; margin-top: 0.15rem; margin-bottom: 0.4rem; font-weight: 500; }
 .resume-paper .contact-line { display: flex; flex-wrap: wrap; gap: 0.4rem 0.8rem; font-size: 0.8rem; color: #64748b; margin-bottom: 1rem; }
-.resume-paper .contact-line svg { width: 14px; height: 14px; fill: currentColor; margin-right: 0.2rem; }
+.resume-paper .contact-line .contact-item { display: inline-flex; align-items: center; gap: 0.25rem; }
 .resume-paper .section-title { font-family: var(--font-heading); font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 2px solid var(--accent-primary); padding-bottom: 0.25rem; margin: 1.2rem 0 0.5rem; color: #0f172a; }
 .resume-paper .entry { margin-bottom: 0.75rem; page-break-inside: avoid; break-inside: avoid; }
 .resume-paper .entry-header { display: flex; justify-content: space-between; align-items: baseline; }
@@ -234,4 +252,51 @@ textarea { resize: vertical; min-height: 70px; }
     .resume-paper { position: static !important; width: 100% !important; max-width: none !important; min-height: auto !important; margin: 0 !important; padding: 0 !important; box-shadow: none !important; border-radius: 0 !important; transform: none !important; }
     .entry, .section-title, .skill-cat-row { page-break-inside: avoid !important; break-inside: avoid !important; }
     li { page-break-inside: avoid !important; break-inside: avoid !important; }
+}
+
+/* ============ RESPONSIVE ADJUSTMENTS (Flawless mobile) ============ */
+@media (max-width: 1024px) {
+    .main-container { grid-template-columns: 1fr; gap: 1rem; }
+    .preview-panel { position: static; }
+    .preview-scroll { max-height: 70vh; }
+    .app-header { padding: 0 1rem; }
+    .header-actions { flex-wrap: wrap; }
+    .header-actions .btn { padding: 0.4rem 0.8rem; font-size: 0.8rem; }
+    .logo { font-size: 1.2rem; }
+}
+
+@media (max-width: 768px) {
+    .app-main { padding: 1rem 0.75rem; }
+    .form-panel, .preview-panel { padding: 1rem; border-radius: 10px; }
+    .panel-header h2 { font-size: 1.2rem; }
+    .header-buttons { flex-wrap: wrap; gap: 0.3rem; }
+    .form-row { grid-template-columns: 1fr; gap: 0.5rem; }
+    .template-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 0.6rem; }
+    .template-modal-content, .jd-modal-content, .version-modal-content { padding: 1rem; width: 95%; max-height: 90vh; }
+    .preview-controls { gap: 0.4rem; flex-wrap: wrap; justify-content: center; }
+    .preview-controls .btn { padding: 0.4rem 0.6rem; font-size: 0.8rem; }
+    .control-group { gap: 0.2rem; }
+    .select-sm { font-size: 0.75rem; padding: 0.3rem 0.4rem; }
+    .color-label { font-size: 0.7rem; }
+    .color-label input[type="color"] { width: 24px; height: 24px; }
+    .resume-paper { padding: 1.5rem; min-height: auto; }
+    .resume-paper h1 { font-size: 1.5rem; }
+    .section-title { font-size: 0.8rem; }
+    .entry-title { font-size: 0.85rem; }
+    .skill-cat-row { flex-direction: column; }
+    .skills-inline-list { display: flex; flex-wrap: wrap; gap: 0.2rem; }
+    input, textarea, select, .btn { font-size: 16px; } /* Prevent iOS zoom */
+    .order-chip { padding: 0.4rem 0.7rem; font-size: 0.8rem; }
+    .section-header { padding: 0.9rem 0.8rem; }
+    .photo-preview { width: 50px; height: 50px; }
+    .template-card { padding: 0.6rem; }
+    .template-thumb { aspect-ratio: 3/4; }
+}
+
+@media (max-width: 480px) {
+    .app-header { height: auto; flex-wrap: wrap; padding: 0.5rem; }
+    .header-container { flex-direction: column; gap: 0.5rem; }
+    .header-actions { width: 100%; justify-content: center; }
+    .preview-controls { flex-direction: column; align-items: stretch; }
+    .preview-controls .control-group { justify-content: center; }
 }
