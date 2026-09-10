@@ -2,11 +2,11 @@
 
 ResumeForge is a client‑side resume builder that helps you create professional, ATS‑optimized resumes with live preview, multiple templates, drag‑and‑drop section ordering, rich editing, and multi‑format export. It runs entirely in the browser – no backend required.
 
-##To view the page
+## To view the page
 
 please visit - https://abislive.github.io/Resume-Builder/
 
-##✨ Features
+## ✨ Features
 
 🎨 Design & Customization
 
@@ -22,7 +22,7 @@ Spacing controls – tight, normal, relaxed.
 
 Inline editing – click directly on preview elements to edit text with Markdown support.
 
-##📝 Content Management
+📝 Content Management
 
 Personal information – name, contact, photo, social links.
 
@@ -40,7 +40,7 @@ Languages & certifications.
 
 Sample data – one‑click demo content.
 
-##🧩 Advanced Functionality
+🧩 Advanced Functionality
 
 Drag‑and‑drop reordering – sections, experience entries, education, projects (via SortableJS).
 
@@ -56,7 +56,7 @@ Version manager – save multiple resume versions (e.g., “Full‑Stack”, “
 
 Auto‑save to localStorage with debounce.
 
-##📤 Export & Persistence
+📤 Export & Persistence
 
 PDF download – direct client‑side PDF generation via html2pdf.js.
 
@@ -68,7 +68,7 @@ JSON export / import – backup and restore.
 
 Print – A4 print styles with proper page breaks.
 
-##📂 File Structure
+## 📂 File Structure
 
 ResumeForge/
 
@@ -80,7 +80,7 @@ ResumeForge/
 
 └── README.md       # This file
 
-##🚀 Getting Started
+## 🚀 Getting Started
 
 Download or clone the repository.
 
@@ -104,7 +104,7 @@ Use the Versions button (📁) to manage multiple resume profiles.
 
 Note: No installation or build step is required. All dependencies are loaded via CDN.
 
-##🔌 External Dependencies
+## 🔌 External Dependencies
 
 Library	Purpose	CDN
 
@@ -116,7 +116,7 @@ Google Fonts	Typography	https://fonts.googleapis.com/css2?family=...
 
 All libraries are loaded from reliable CDNs. An internet connection is required for them (unless you self‑host the files).
 
-##🧠 How It Works
+## 🧠 How It Works
 
 The entire resume state is stored in a central JavaScript object (state) and persisted to localStorage.
 
@@ -128,7 +128,7 @@ Inline edits use the contenteditable attribute and sync back to the state on blu
 
 Templates are implemented with CSS classes that change typography, borders, colors, and layout.
 
-##⚙️ Browser Support
+## ⚙️ Browser Support
 
 Optimized for modern evergreen browsers:
 
@@ -142,7 +142,7 @@ Safari (latest)
 
 Older browsers may not support all CSS features (e.g., backdrop-filter) but will still function.
 
-##🛠️ Known Limitations
+## 🛠️ Known Limitations
 
 PDF generation uses html2canvas; complex layouts with multiple pages may occasionally clip. For best results, use the browser’s Print → 
 Save as PDF option.
@@ -151,7 +151,7 @@ The job description matcher uses a simple keyword/phrase comparison and is not a
 
 LocalStorage capacity (~5 MB) may limit the number of resume versions you can save, especially with photos.
 
-##🔮 Future Enhancements
+## 🔮 Future Enhancements
 
 More templates (e.g., functional, hybrid, academic CV).
 
@@ -165,11 +165,11 @@ Multi‑page layout simulation with true page breaks.
 
 Cloud sync (optional).
 
-##📝 License
+## 📝 License
 
 This project is provided for educational and personal use. You are free to modify and distribute it, but attribution is appreciated.
 
-##🙏 Acknowledgements
+## 🙏 Acknowledgements
 
 SortableJS – drag‑and‑drop
 
